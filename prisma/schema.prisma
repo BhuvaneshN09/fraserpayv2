@@ -1,0 +1,111 @@
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            generator client {
+  provider = "prisma-client-js"                                                                                                     
+}                                                                                                                                                                                                                                                                                                             
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  STUDENT
+  SAC_ADMIN
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  username      String?   @unique
+  passwordHash  String?
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  balance       Decimal   @default(0) @db.Decimal(12, 2)
+  role          UserRole  @default(STUDENT)
+  accounts      Account[]
+  sessions      Session[]
+  sentTransfers WalletTransfer[] @relation("TransferSender")
+  receivedTransfers WalletTransfer[] @relation("TransferRecipient")
+  studentDeposits CashDeposit[] @relation("DepositStudent")
+  recordedDeposits CashDeposit[] @relation("DepositStaff")
+  recordedReversals CashDepositReversal[] @relation("ReversalStaff")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model WalletTransfer {
+  id          String   @id @default(cuid())
+  senderId    String
+  recipientId String
+  amount      Decimal  @db.Decimal(12, 2)
+  createdAt   DateTime @default(now())
+  sender      User     @relation("TransferSender", fields: [senderId], references: [id], onDelete: Cascade)
+  recipient   User     @relation("TransferRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([senderId, createdAt])
+  @@index([recipientId, createdAt])
+}
+
+model CashDeposit {
+  id        String   @id @default(cuid())
+  requestId String   @unique
+  studentId String
+  staffId   String
+  eventName String   @db.VarChar(80)
+  amount    Decimal  @db.Decimal(12, 2)
+  createdAt DateTime @default(now())
+  student   User     @relation("DepositStudent", fields: [studentId], references: [id], onDelete: Restrict)
+  staff     User     @relation("DepositStaff", fields: [staffId], references: [id], onDelete: Restrict)
+  reversal  CashDepositReversal?
+
+  @@index([studentId, createdAt])
+  @@index([staffId, createdAt])
+  @@index([eventName, createdAt])
+}
+
+model CashDepositReversal {
+  id        String      @id @default(cuid())
+  depositId String      @unique
+  staffId   String
+  reason    String      @db.VarChar(240)
+  createdAt DateTime    @default(now())
+  deposit   CashDeposit @relation(fields: [depositId], references: [id], onDelete: Restrict)
+  staff     User        @relation("ReversalStaff", fields: [staffId], references: [id], onDelete: Restrict)
+
+  @@index([staffId, createdAt])
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([sessionToken])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@id([identifier, token])
+}

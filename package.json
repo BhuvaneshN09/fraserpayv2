@@ -1,0 +1,44 @@
+{
+  "name": "fraserpay-v2",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "user:role": "node scripts/set-user-role.mjs"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "2.11.3",
+    "@prisma/client": "6.8.2",
+    "bcryptjs": "3.0.2",
+    "next": "15.5.26",
+    "next-auth": "5.0.0-beta.32",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.1.5",
+    "@types/node": "22.15.18",
+    "@types/react": "19.0.10",
+    "@types/react-dom": "19.0.4",
+    "@eslint/eslintrc": "3.3.1",
+    "eslint": "9.39.5",
+    "eslint-config-next": "15.5.26",
+    "prisma": "6.8.2",
+    "tailwindcss": "4.1.5",
+    "typescript": "5.8.3",
+    "vitest": "4.1.11"
+  },
+  "overrides": {
+    "postcss": "8.5.28",
+    "sharp": "0.35.4"
+  }
+}

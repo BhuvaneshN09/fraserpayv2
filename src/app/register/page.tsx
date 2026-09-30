@@ -22,7 +22,7 @@ export default async function RegisterPage() {
         <h1 id="register-heading">Create your<br /><span>account.</span></h1>
         <p className="login-copy">Use your @pdsb.net email. Student accounts cannot record deposits.</p>
         <RegisterForm />
-        <p className="auth-switch">Already have an account? <Link href="/login">Sign in</Link></p>
+        <p className="auth-switch">Do you already have an account? <Link href="/login">Sign in</Link></p>
       </section>
       <footer className="login-footer"><span>FRASER PAY</span><span>ACCOUNT ACCESS</span></footer>
     </main>

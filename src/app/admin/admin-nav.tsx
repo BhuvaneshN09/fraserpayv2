@@ -22,7 +22,6 @@ export function AdminNav({ email, active }: { email: string | null; active: "tra
       <nav className="admin-tabs" aria-label="SAC administration">
         <Link className={active === "transfer" ? "active" : ""} href="/admin/transfer">Transfer / Add</Link>
         <Link className={active === "monitor" ? "active" : ""} href="/admin/monitor">Monitor</Link>
-        <Link className={active === "" ? "active" : ""}  href="/admin/monitor">Monitor</Link>
       </nav>
     </>
   );
